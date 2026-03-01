@@ -155,3 +155,9 @@ add_executable(test_devicelistmodel
 )
 target_link_libraries(test_devicelistmodel PRIVATE runtime Qt6::Core Qt6::Test)
 add_test(NAME test_devicelistmodel COMMAND test_devicelistmodel)
+
+# --- Mobile App (iOS / Desktop with Qt Quick) ---
+option(BUILD_MOBILE_APP "Build the mobile monitoring app (requires Qt Quick)" OFF)
+if(BUILD_MOBILE_APP)
+    add_subdirectory(mobile)
+endif()

@@ -6,6 +6,9 @@ on:
   pull_request:
 
 jobs:
+  # ========================================
+  # Job 1: Linux Build & Test (all 14 suites)
+  # ========================================
   build-and-test:
     runs-on: ubuntu-latest
 
@@ -30,3 +33,60 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build --output-on-failure
+
+  # ========================================
+  # Job 2: iOS Build (macOS runner + Qt for iOS)
+  # ========================================
+  ios-build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Qt for iOS
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.*'
+          target: ios
+          modules: 'qtquick3d'
+          cache: true
+
+      - name: Install Qt for macOS (host tools)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.*'
+          target: desktop
+          cache: true
+          set-env: false
+
+      - name: Configure for iOS
+        run: |
+          QT_HOST_PATH=$(find $RUNNER_WORKSPACE/Qt -maxdepth 2 -name "macos" -type d 2>/dev/null | head -1)
+          QT_IOS_PATH=$(find $RUNNER_WORKSPACE/Qt -maxdepth 2 -name "ios" -type d 2>/dev/null | head -1)
+          echo "QT_HOST_PATH=$QT_HOST_PATH"
+          echo "QT_IOS_PATH=$QT_IOS_PATH"
+          cmake -S . -B build-ios \
+            -G Xcode \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=16.0 \
+            -DCMAKE_PREFIX_PATH="$QT_IOS_PATH" \
+            -DQT_HOST_PATH="$QT_HOST_PATH" \
+            -DBUILD_MOBILE_APP=ON \
+            -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO
+
+      - name: Build iOS app
+        run: |
+          cmake --build build-ios \
+            --config Release \
+            --target IndustrialMonitor \
+            -- -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: IndustrialMonitor-iOS
+          path: build-ios/mobile/Release-iphoneos/*.app
+          if-no-files-found: warn
