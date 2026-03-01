@@ -179,3 +179,32 @@ option(BUILD_MOBILE_APP "Build the mobile monitoring app (requires Qt Quick)" OF
 if(BUILD_MOBILE_APP)
     add_subdirectory(mobile)
 endif()
+
+# --- Windows Desktop App (Qt Widgets) ---
+option(BUILD_DESKTOP_APP "Build the Windows desktop monitoring app (requires Qt Widgets)" OFF)
+if(BUILD_DESKTOP_APP)
+    add_subdirectory(desktop)
+endif()
+
+# --- Test: Desktop Client ---
+find_package(Qt6 COMPONENTS Widgets QUIET)
+if(Qt6Widgets_FOUND)
+    add_executable(test_desktopclient
+        tests/test_desktopclient.cpp
+        desktop/mainwindow.h
+        desktop/mainwindow.cpp
+        desktop/dashboardwidget.h
+        desktop/dashboardwidget.cpp
+        desktop/devicetablewidget.h
+        desktop/devicetablewidget.cpp
+        desktop/controlpanelwidget.h
+        desktop/controlpanelwidget.cpp
+        desktop/alertwidget.h
+        desktop/alertwidget.cpp
+        desktop/connectiondialog.h
+        desktop/connectiondialog.cpp
+    )
+    target_include_directories(test_desktopclient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/desktop)
+    target_link_libraries(test_desktopclient PRIVATE runtime Qt6::Core Qt6::Widgets Qt6::Test)
+    add_test(NAME test_desktopclient COMMAND test_desktopclient)
+endif()
