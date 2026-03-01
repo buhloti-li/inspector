@@ -87,3 +87,24 @@ add_executable(test_recoverymanager
 )
 target_link_libraries(test_recoverymanager PRIVATE runtime Qt6::Core Qt6::Test)
 add_test(NAME test_recoverymanager COMMAND test_recoverymanager)
+
+# --- Test: SimDrivers ---
+add_executable(test_simdrivers
+    tests/test_simdrivers.cpp
+)
+target_link_libraries(test_simdrivers PRIVATE runtime Qt6::Core Qt6::Test)
+add_test(NAME test_simdrivers COMMAND test_simdrivers)
+
+# --- Test: TrajectoryPlanner ---
+add_executable(test_trajectoryplanner
+    tests/test_trajectoryplanner.cpp
+)
+target_link_libraries(test_trajectoryplanner PRIVATE runtime Qt6::Core Qt6::Test)
+add_test(NAME test_trajectoryplanner COMMAND test_trajectoryplanner)
+
+# --- Test: Integration Pick Cycle ---
+add_executable(test_integration_pickcycle
+    tests/test_integration_pickcycle.cpp
+)
+target_link_libraries(test_integration_pickcycle PRIVATE runtime Qt6::Core Qt6::Test)
+add_test(NAME test_integration_pickcycle COMMAND test_integration_pickcycle)
