@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Test)
+find_package(Qt6 REQUIRED COMPONENTS Core Test Network)
 
 enable_testing()
 
@@ -43,6 +43,10 @@ add_library(runtime
     src/orchestration/recoverymanager.h
     src/orchestration/recoverymanager.cpp
 
+    # Server
+    src/server/workcellserver.h
+    src/server/workcellserver.cpp
+
     # Mobile client
     src/mobile/mobileclient.h
     src/mobile/mobileclient.cpp
@@ -55,7 +59,7 @@ add_library(runtime
     src/mobile/devicelistmodel.h
     src/mobile/devicelistmodel.cpp
 )
-target_link_libraries(runtime PUBLIC Qt6::Core)
+target_link_libraries(runtime PUBLIC Qt6::Core Qt6::Network)
 target_include_directories(runtime PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # --- Test: WorkcellController (original) ---
@@ -155,6 +159,20 @@ add_executable(test_devicelistmodel
 )
 target_link_libraries(test_devicelistmodel PRIVATE runtime Qt6::Core Qt6::Test)
 add_test(NAME test_devicelistmodel COMMAND test_devicelistmodel)
+
+# --- Server executable ---
+option(BUILD_SERVER "Build the server executable" OFF)
+if(BUILD_SERVER)
+    add_executable(industrial-server server/main.cpp)
+    target_link_libraries(industrial-server PRIVATE runtime Qt6::Core Qt6::Network)
+endif()
+
+# --- Test: WorkcellServer ---
+add_executable(test_workcellserver
+    tests/test_workcellserver.cpp
+)
+target_link_libraries(test_workcellserver PRIVATE runtime Qt6::Core Qt6::Network Qt6::Test)
+add_test(NAME test_workcellserver COMMAND test_workcellserver)
 
 # --- Mobile App (iOS / Desktop with Qt Quick) ---
 option(BUILD_MOBILE_APP "Build the mobile monitoring app (requires Qt Quick)" OFF)

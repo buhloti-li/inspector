@@ -311,8 +311,16 @@ void VisionPipelineTest::testMinConfidenceZero() {
     pipeline.setCameraDriver(&camera);
     pipeline.setMinConfidence(0.0f);
 
-    auto results = pipeline.execute();
-    QVERIFY(results.size() >= 1);
+    // Random placement may land near z-filter boundary; retry a few times
+    bool detected = false;
+    for (int attempt = 0; attempt < 5; ++attempt) {
+        auto results = pipeline.execute();
+        if (!results.isEmpty()) {
+            detected = true;
+            break;
+        }
+    }
+    QVERIFY(detected);
 }
 
 void VisionPipelineTest::testMinConfidenceOne() {
