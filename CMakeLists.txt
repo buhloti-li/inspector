@@ -42,6 +42,18 @@ add_library(runtime
     src/orchestration/workflowengine.cpp
     src/orchestration/recoverymanager.h
     src/orchestration/recoverymanager.cpp
+
+    # Mobile client
+    src/mobile/mobileclient.h
+    src/mobile/mobileclient.cpp
+    src/mobile/workcellstatusprovider.h
+    src/mobile/workcellstatusprovider.cpp
+    src/mobile/remotecommandservice.h
+    src/mobile/remotecommandservice.cpp
+    src/mobile/alertnotificationservice.h
+    src/mobile/alertnotificationservice.cpp
+    src/mobile/devicelistmodel.h
+    src/mobile/devicelistmodel.cpp
 )
 target_link_libraries(runtime PUBLIC Qt6::Core)
 target_include_directories(runtime PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -108,3 +120,38 @@ add_executable(test_integration_pickcycle
 )
 target_link_libraries(test_integration_pickcycle PRIVATE runtime Qt6::Core Qt6::Test)
 add_test(NAME test_integration_pickcycle COMMAND test_integration_pickcycle)
+
+# --- Test: MobileClient ---
+add_executable(test_mobileclient
+    tests/test_mobileclient.cpp
+)
+target_link_libraries(test_mobileclient PRIVATE runtime Qt6::Core Qt6::Test)
+add_test(NAME test_mobileclient COMMAND test_mobileclient)
+
+# --- Test: WorkcellStatusProvider ---
+add_executable(test_workcellstatusprovider
+    tests/test_workcellstatusprovider.cpp
+)
+target_link_libraries(test_workcellstatusprovider PRIVATE runtime Qt6::Core Qt6::Test)
+add_test(NAME test_workcellstatusprovider COMMAND test_workcellstatusprovider)
+
+# --- Test: RemoteCommandService ---
+add_executable(test_remotecommandservice
+    tests/test_remotecommandservice.cpp
+)
+target_link_libraries(test_remotecommandservice PRIVATE runtime Qt6::Core Qt6::Test)
+add_test(NAME test_remotecommandservice COMMAND test_remotecommandservice)
+
+# --- Test: AlertNotificationService ---
+add_executable(test_alertnotificationservice
+    tests/test_alertnotificationservice.cpp
+)
+target_link_libraries(test_alertnotificationservice PRIVATE runtime Qt6::Core Qt6::Test)
+add_test(NAME test_alertnotificationservice COMMAND test_alertnotificationservice)
+
+# --- Test: DeviceListModel ---
+add_executable(test_devicelistmodel
+    tests/test_devicelistmodel.cpp
+)
+target_link_libraries(test_devicelistmodel PRIVATE runtime Qt6::Core Qt6::Test)
+add_test(NAME test_devicelistmodel COMMAND test_devicelistmodel)
